@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+
+  redis-node-1:
+    build: ./redis
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7001
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.7
+    ports:
+      - 7001:6379
+
+  redis-node-2:
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7002
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.8
+    ports:
+      - 7002:6379
+    depends_on:
+      - redis-node-1
+
+  redis-node-3:
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7003
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.9
+    ports:
+      - 7003:6379
+    depends_on:
+      - redis-node-1
+
+  redis-node-4:
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7004
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.10
+    ports:
+      - 7004:6379
+    depends_on:
+      - redis-node-1
+
+  redis-node-5:
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7005
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.11
+    ports:
+      - 7005:6379
+    depends_on:
+      - redis-node-1
+
+  redis-node-6:
+    image: redis:5.0.14-cm
+    environment:
+      PORT: 7006
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.12
+    ports:
+      - 7006:6379
+    depends_on:
+      - redis-node-1
+
+
+  redis-cluster-image:
+    build: ./cluster
+    image: redis:5.0.14-cm-cluster-cli-v2
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+    networks:
+      redisnet:
+        ipv4_address: 10.0.0.17
+    ports:
+      - 7009:6379
+
+networks:
+  redisnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/16
